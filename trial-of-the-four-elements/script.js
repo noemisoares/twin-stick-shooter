@@ -21,11 +21,20 @@ canvas.addEventListener('mouseup', () => mouse.clicked = false);
 
 let score = 0;
 let time = 0;
+let isGameOver = false;
+let animationId;
+
+function gameOver() {
+    isGameOver = true;
+}
 
 class Player {
     constructor() {
         this.x = canvas.width / 2;
         this.y = canvas.height / 2;
+        this.hp = 100;
+        this.maxHp = 100;
+        this.invulnerable = 0; // tempo de invencibilidade após tomar dano
         this.speed = 3.5;
         this.radius = 16;
         this.facingRight = true;
@@ -47,11 +56,31 @@ class Player {
             this.shootTimer = 15;
         }
         if (this.shootTimer > 0) this.shootTimer--;
+
+        if (this.invulnerable > 0) this.invulnerable--;
+    }
+
+    takeDamage(amount) {
+        if (this.invulnerable > 0) return;
+
+        this.hp -= amount;
+        this.invulnerable = 60; // ~1 segundo de invencibilidade
+
+        if (this.hp <= 0) {
+            this.hp = 0;
+            gameOver();
+        }
+
+        updateUI();
     }
 
     draw() {
         // (7) save/restore
         ctx.save();
+
+        if (this.invulnerable > 0) {
+            ctx.globalAlpha = Math.sin(this.invulnerable * 0.5) > 0 ? 0.3 : 1;
+        }
         
         // (1) translação
         ctx.translate(this.x, this.y);
@@ -71,10 +100,6 @@ class Player {
         ctx.lineTo(0, -28); 
         ctx.closePath();
         ctx.fill();
-
-        // (7) save/restore
-        // (bonus) hierarquia
-        ctx.save(); 
         
         let wandAngle = Math.atan2(mouse.y - this.y, mouse.x - this.x);
         if (!this.facingRight) {
@@ -104,6 +129,8 @@ class Player {
         ctx.beginPath();
         ctx.arc(0, 0, 5, 0, Math.PI * 2);
         ctx.fill();
+
+        ctx.globalAlpha = 1;
         
         // (7) save/restore
         ctx.restore(); 
@@ -192,7 +219,7 @@ class Enemy {
     update() {
         const dx = player.x - this.x;
         const dy = player.y - this.y;
-        const distToPlayer = Math.sqrt(dx*dx + dy*dy);
+        const distToPlayer = Math.sqrt(dx*dx + dy*dy) || 1;
 
         if (this.type === 'terra' || this.type === 'fogo') {
             this.x += (dx / distToPlayer) * this.speed;
@@ -219,9 +246,9 @@ class Enemy {
 
         if (Math.hypot(player.x - this.x, player.y - this.y) < this.radius + player.radius) {
             this.active = false;
-            score = Math.max(0, score - 50); 
-            updateScore();
+            player.takeDamage(10);
         }
+
     }
 
     draw() {
@@ -290,14 +317,17 @@ class Enemy {
         // (7) save/restore
         ctx.restore();
     }
+
+    
 }
 
 const player = new Player();
 const projectiles = [];
 const enemies = [];
 
-function updateScore() {
+function updateUI() {
     document.getElementById('score').innerText = `Score: ${score}`;
+    document.getElementById('hp').innerText = `HP: ${player.hp}`;
 }
 
 function drawDungeon() {
@@ -331,6 +361,24 @@ let lastTime = performance.now();
 
 // (6) animação
 function gameLoop(currentTime) {
+    if (isGameOver) {
+        ctx.fillStyle = "rgba(0,0,0,0.7)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = "#fff";
+        ctx.font = "48px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText("GAME OVER", canvas.width / 2, canvas.height / 2);
+
+        ctx.font = "24px Arial";
+        ctx.fillText(`Score: ${score}`, canvas.width / 2, canvas.height / 2 + 40);
+
+        document.getElementById("restartBtn").style.display = "block";
+
+        animationId = null;
+        return;
+    }
+
     const deltaTime = (currentTime - lastTime) / 1000;
     lastTime = currentTime;
     time += deltaTime;
@@ -368,7 +416,7 @@ function gameLoop(currentTime) {
                 if (e.hp <= 0) {
                     e.active = false;
                     score += (e.type === 'terra' ? 30 : e.type === 'agua' ? 20 : 10);
-                    updateScore();
+                    updateUI();
                 }
                 break;
             }
@@ -385,7 +433,46 @@ function gameLoop(currentTime) {
         }
     }
 
-    requestAnimationFrame(gameLoop);
+    animationId = requestAnimationFrame(gameLoop);
 }
 
-requestAnimationFrame(gameLoop);
+function restartGame() {
+    if (animationId !== null) {
+        cancelAnimationFrame(animationId);
+        animationId = null;
+    }
+
+    score = 0;
+    time = 0;
+    isGameOver = false;
+
+    lastTime = performance.now();
+
+    player.x = canvas.width / 2;
+    player.y = canvas.height / 2;
+    player.hp = player.maxHp;
+    player.invulnerable = 0;
+
+    enemies.length = 0;
+    projectiles.length = 0;
+
+    updateUI();
+
+    document.getElementById("restartBtn").style.display = "none";
+
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    if (animationId === null) {
+        startGame();
+    }
+}
+
+function startGame() {
+    lastTime = performance.now();
+    animationId = requestAnimationFrame(gameLoop);
+}
+
+startGame();
+
+document.getElementById("restartBtn").addEventListener("click", restartGame);
