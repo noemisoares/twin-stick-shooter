@@ -1,5 +1,18 @@
 # Trial of the Four Elements
 
+## Alunos
+# Gabriel de Souza Leão Araújo
+# Noemi Soares Gonçalves da Silva
+
+## Tecnologias Utilizadas
+**HTML5**
+**CSS3**
+**JavaScript**
+**Canvas API (2D Rendering)**
+**Programação Orientada a Objetos**
+**Game Loop com requestAnimationFrame**
+**Matemática aplicada a jogos (trigonometria + vetores)**
+
 ## Tema Escolhido
 O jogo é um minigame estilo "Sobrevivência de Arena" (baseado em Journey of the Prairie King de Stardew Valley), adaptado para um tema mágico onde o jogador é um mago em uma Dungeon que deve enfrentar 4 inimigos elementais (Terra, Fogo, Água e Ar).
 
