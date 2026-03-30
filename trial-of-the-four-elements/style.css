@@ -46,22 +46,44 @@ p {
     text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
 }
 
+#hp {
+    font-size: 24px;
+    font-weight: bold;
+    color: #ff5252;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+    margin-top: 15px;
+    margin-bottom: 5px;
+}
+
 #score {
     font-size: 24px;
     font-weight: bold;
     color: #ffd700;
     text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
-    margin-top: 15px;
+    margin-top: 0;
 }
 
 #restartBtn {
     position: absolute;
-    top: 60%;
+    top: 68%;
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 10;
+    padding: 12px 32px;
+    font-size: 22px;
+    font-weight: bold;
+    color: #111;
+    background-color: #eeeeee;
+    border: 3px solid #333;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+    transition: all 0.2s ease;
 }
 
 #restartBtn:hover {
-    background: #5e35b1;
+    background: #673ab7;
+    color: white;
+    transform: translate(-50%, -52%);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.8);
 }
