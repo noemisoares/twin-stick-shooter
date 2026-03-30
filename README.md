@@ -5,6 +5,7 @@
 - **Noemi Soares Gonçalves da Silva**
 
 ---
+
 ## Tema Escolhido
 O jogo é um minigame no estilo *arena survival*, inspirado em *Journey of the Prairie King* (de *Stardew Valley*), adaptado para um tema mágico onde o jogador assume o papel de um mago preso em uma dungeon, enfrentando inimigos elementais — **Terra, Fogo, Água e Ar** — cada um com comportamentos únicos baseados em transformações geométricas e lógica matemática.
 
@@ -25,7 +26,7 @@ O foco do projeto é demonstrar, na prática, o uso avançado da **API Canvas 2D
 
 ## Critérios de Avaliação Atendidos (Transformações Utilizadas)
 
-### Obrigatórios (Numerados de 1 a 7 estritamente como na rubrica):
+### Requisitos Obrigatórios:
 1. **Translação (`ctx.translate`)**: Aplicada a todos os elementos móveis da cena para reposicionar a origem antes de desenhar (Jogador, Projéteis, Inimigos da Terra e Água).
 2. **Rotação (`ctx.rotate`)**: Integrada na Varinha (que rotaciona perfeitamente em direção à mira do mouse) e no inimigo de Fogo (que rotaciona para encarar a movimentação em tempo real do Mago).
 3. **Escala (`ctx.scale`)**: Implementada para aplicar um efeito pulsante natural à magia na ponta da varinha do Mago utilizando `Math.sin(tempo)`.
@@ -34,7 +35,7 @@ O foco do projeto é demonstrar, na prática, o uso avançado da **API Canvas 2D
 6. **Animação**: Funcional com uso consistente de `requestAnimationFrame` em um _game loop_ infinito. Uma chamada de segurança `ctx.setTransform(1, 0, 0, 1, 0, 0)` na primeira linha do loop garante o esvaziamento adequado da herança da matriz anterior a cada frame.
 7. **save/restore (pilhas de estados)**: Empurrados estrategicamente à toda chamada baseada em função `draw()` garantindo coesão absoluta nas hierarquias. 
 
-### Diferenciais / Bônus Atendidos e Marcados:
+### Requisitos Bônus:
 - **Interatividade**: Listener reativo `keydown/keyup` com chaves lógicas de controle de estado em `WASD` permitindo controle absoluto cinético contínuo do mago em união com a reatividade do tracking do cursor.
 - **Reflexão**: Uso do `scale(-1, 1)` invertendo instantaneamente o `X` do corpo do personagem caso ele mire para o quadrante em que o valor local do `mouse.x < player.x`.
 - **Hierarquia de Transformações**: Sistema Mago > Varinha > Mágica. Como o código usa a cascata linear do `ctx.save()`, toda manipulação de dimensão ou espelhamento feito no mago afeta perfeitamente e geometricamente o local renderizado da varinha e do seu brilho terminal sem conflitos.
